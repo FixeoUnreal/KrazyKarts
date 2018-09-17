@@ -14,7 +14,7 @@ AGoKart::AGoKart()
 
 void AGoKart::MoveForward(float Val)
 {
-	KartVelocity = GetActorForwardVector() * Val * 20;
+	Throttle = Val;
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +28,10 @@ void AGoKart::BeginPlay()
 void AGoKart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FVector Force = GetActorForwardVector() * MaxDrivingForce * Throttle;
+	FVector Acceleration = Force / Mass;
+	KartVelocity += Acceleration * DeltaTime;
 
 	// Velocity in cm/s so transform in m/s
 	FVector Translation = KartVelocity * 100 * DeltaTime;

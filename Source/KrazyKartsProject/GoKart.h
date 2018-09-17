@@ -32,5 +32,17 @@ public:
 
 private:
 	FVector KartVelocity;
+
+	// Force that is in proportion to the kart's acceleration
+	UPROPERTY(EditAnywhere, Category = "GoKart")
+	float Throttle;
+
+	// Mass of the car
+	UPROPERTY(EditAnywhere, Category = "GoKart")
+	float Mass = 1000;
+
+	UPROPERTY(EditAnywhere, Category = "GoKart")
+	float MaxDrivingForce = 10000;
+
 	
 };
