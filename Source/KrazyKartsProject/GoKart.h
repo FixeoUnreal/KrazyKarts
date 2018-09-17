@@ -50,6 +50,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float DragCoefficient = 16.f;
 
+	UPROPERTY(EditAnywhere, Category = "GoKart")
+	float RollingResistanceCoefficient = 0.015f;
+
 private:
 	/** Handle pressing forwards */
 	void MoveForward(float Val);
@@ -63,7 +66,9 @@ private:
 
 	void UpdateLocationFromVelocity(float DeltaTime);
 
-	FVector GetResistance();
+	FVector GetAirResistance();
+
+	FVector GetRollingResistance();
 
 	
 };

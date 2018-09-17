@@ -2,6 +2,7 @@
 
 #include "GoKart.h"
 #include <Components/InputComponent.h>
+#include <Engine/World.h>
 
 
 // Sets default values
@@ -49,9 +50,12 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AGoKart::MoveKart(float DeltaTime)
 {
 	FVector Force = GetActorForwardVector() * MaxDrivingForce * Throttle;
-	Force += GetResistance();
+	Force += GetAirResistance();
+	Force += GetRollingResistance();
 	FVector Acceleration = Force / Mass;
 	KartVelocity += Acceleration * DeltaTime;
+
+	
 
 	UpdateRotation(DeltaTime);
 
@@ -82,11 +86,19 @@ void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
 	}
 }
 
-FVector AGoKart::GetResistance()
+FVector AGoKart::GetAirResistance()
 {
-	float Speed = KartVelocity.Size();
-	float AirResistance = -(Speed * Speed) * DragCoefficient;
+	// Caculate air resistance
+	FVector AirResistance = -KartVelocity.GetSafeNormal() * KartVelocity.SizeSquared() * DragCoefficient;
+	return AirResistance;
+}
 
-	return -KartVelocity.GetSafeNormal() * KartVelocity.SizeSquared() * DragCoefficient;
+FVector AGoKart::GetRollingResistance()
+{
+	// Calculate roll resistance
+	float AccelerationDueToGravity = -GetWorld()->GetGravityZ() / 100;
+	FVector RollResistance = -KartVelocity.GetSafeNormal() * AccelerationDueToGravity * Mass * RollingResistanceCoefficient;
+
+	return RollResistance;
 }
 
