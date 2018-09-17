@@ -49,6 +49,7 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AGoKart::MoveKart(float DeltaTime)
 {
 	FVector Force = GetActorForwardVector() * MaxDrivingForce * Throttle;
+	Force += GetResistance();
 	FVector Acceleration = Force / Mass;
 	KartVelocity += Acceleration * DeltaTime;
 
@@ -79,5 +80,13 @@ void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
 	{
 		KartVelocity = FVector::ZeroVector;
 	}
+}
+
+FVector AGoKart::GetResistance()
+{
+	float Speed = KartVelocity.Size();
+	float AirResistance = -(Speed * Speed) * DragCoefficient;
+
+	return -KartVelocity.GetSafeNormal() * KartVelocity.SizeSquared() * DragCoefficient;
 }
 

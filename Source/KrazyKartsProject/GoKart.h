@@ -47,6 +47,9 @@ private:
 
 	float SteeringThrow;
 
+	UPROPERTY(EditAnywhere, Category = "GoKart")
+	float DragCoefficient = 16.f;
+
 private:
 	/** Handle pressing forwards */
 	void MoveForward(float Val);
@@ -59,6 +62,8 @@ private:
 	void UpdateRotation(float DeltaTime);
 
 	void UpdateLocationFromVelocity(float DeltaTime);
+
+	FVector GetResistance();
 
 	
 };
