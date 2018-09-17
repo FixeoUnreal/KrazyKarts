@@ -16,9 +16,6 @@ public:
 	// Sets default values for this pawn's properties
 	AGoKart();
 
-	/** Handle pressing forwards */
-	void MoveForward(float Val);
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -44,8 +41,22 @@ private:
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float MaxDrivingForce = 10000;
 
+	// The number of degrees rotated per second at full control throw
+	UPROPERTY(EditAnywhere, Category = "GoKart")
+	float MaxDegreesPerSecond = 90;
+
+	float SteeringThrow;
+
 private:
+	/** Handle pressing forwards */
+	void MoveForward(float Val);
+
+	/** Handle pressing right */
+	void MoveRight(float Val);
+
 	void MoveKart(float DeltaTime);
+
+	void UpdateRotation(float DeltaTime);
 
 	void UpdateLocationFromVelocity(float DeltaTime);
 

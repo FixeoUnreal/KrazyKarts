@@ -17,6 +17,11 @@ void AGoKart::MoveForward(float Val)
 	Throttle = Val;
 }
 
+void AGoKart::MoveRight(float Val)
+{
+	SteeringThrow = Val;
+}
+
 // Called when the game starts or when spawned
 void AGoKart::BeginPlay()
 {
@@ -38,6 +43,7 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
 }
 
 void AGoKart::MoveKart(float DeltaTime)
@@ -46,8 +52,19 @@ void AGoKart::MoveKart(float DeltaTime)
 	FVector Acceleration = Force / Mass;
 	KartVelocity += Acceleration * DeltaTime;
 
+	UpdateRotation(DeltaTime);
+
 	UpdateLocationFromVelocity(DeltaTime);
 
+}
+
+void AGoKart::UpdateRotation(float DeltaTime)
+{
+	float RotationAngle = MaxDegreesPerSecond * DeltaTime * SteeringThrow;
+	FQuat RotationDelta(GetActorUpVector(), FMath::DegreesToRadians(RotationAngle));
+	AddActorWorldRotation(RotationDelta);
+
+	 KartVelocity = RotationDelta.RotateVector(KartVelocity);
 }
 
 void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
