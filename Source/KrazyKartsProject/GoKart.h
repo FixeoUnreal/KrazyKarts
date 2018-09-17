@@ -44,5 +44,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float MaxDrivingForce = 10000;
 
+private:
+	void MoveKart(float DeltaTime);
+
+	void UpdateLocationFromVelocity(float DeltaTime);
+
 	
 };
