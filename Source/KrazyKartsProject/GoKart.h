@@ -62,9 +62,14 @@ private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_MoveForward(float Val);
 
+	void MoveForward(float Val);
+
 	/** Handle pressing right */
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_MoveRight(float Val);
+
+	void MoveRight(float Val);
+
 
 	void MoveKart(float DeltaTime);
 
