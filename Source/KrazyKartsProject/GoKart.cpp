@@ -8,7 +8,7 @@
 // Sets default values
 AGoKart::AGoKart()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -27,7 +27,7 @@ void AGoKart::MoveRight(float Val)
 void AGoKart::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -55,7 +55,7 @@ void AGoKart::MoveKart(float DeltaTime)
 	FVector Acceleration = Force / Mass;
 	KartVelocity += Acceleration * DeltaTime;
 
-	
+
 
 	UpdateRotation(DeltaTime);
 
@@ -65,11 +65,12 @@ void AGoKart::MoveKart(float DeltaTime)
 
 void AGoKart::UpdateRotation(float DeltaTime)
 {
-	float RotationAngle = MaxDegreesPerSecond * DeltaTime * SteeringThrow;
-	FQuat RotationDelta(GetActorUpVector(), FMath::DegreesToRadians(RotationAngle));
+	float DeltaLocation = FVector::DotProduct(GetActorForwardVector(), KartVelocity) * DeltaTime;
+	float RotationAngle = DeltaLocation / MinTurnRadius * SteeringThrow;
+	FQuat RotationDelta(GetActorUpVector(), RotationAngle);
 	AddActorWorldRotation(RotationDelta);
 
-	 KartVelocity = RotationDelta.RotateVector(KartVelocity);
+	KartVelocity = RotationDelta.RotateVector(KartVelocity);
 }
 
 void AGoKart::UpdateLocationFromVelocity(float DeltaTime)

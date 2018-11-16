@@ -53,6 +53,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float RollingResistanceCoefficient = 0.015f;
 
+	// Minimum radius of car turning circle at full lock (m).
+	UPROPERTY(EditAnywhere, Category = "GoKart")
+	float MinTurnRadius = 10.f;
+
 private:
 	/** Handle pressing forwards */
 	void MoveForward(float Val);
