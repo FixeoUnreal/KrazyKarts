@@ -13,14 +13,32 @@ AGoKart::AGoKart()
 
 }
 
-void AGoKart::MoveForward(float Val)
+void AGoKart::Server_MoveForward_Implementation(float Val)
 {
 	Throttle = Val;
 }
 
-void AGoKart::MoveRight(float Val)
+bool AGoKart::Server_MoveForward_Validate(float Val)
+{
+	if (Val > 1.f || Val < -1.f)
+	{
+		return false;
+	}
+	return true;
+}
+
+void AGoKart::Server_MoveRight_Implementation(float Val)
 {
 	SteeringThrow = Val;
+}
+
+bool AGoKart::Server_MoveRight_Validate(float Val)
+{
+	if (Val > 1.f || Val < -1.f)
+	{
+		return false;
+	}
+	return true;
 }
 
 // Called when the game starts or when spawned
@@ -43,8 +61,8 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::Server_MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::Server_MoveRight);
 }
 
 void AGoKart::MoveKart(float DeltaTime)

@@ -59,10 +59,12 @@ private:
 
 private:
 	/** Handle pressing forwards */
-	void MoveForward(float Val);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_MoveForward(float Val);
 
 	/** Handle pressing right */
-	void MoveRight(float Val);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_MoveRight(float Val);
 
 	void MoveKart(float DeltaTime);
 
