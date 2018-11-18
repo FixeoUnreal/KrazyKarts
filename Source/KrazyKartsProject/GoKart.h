@@ -30,11 +30,8 @@ public:
 private:
 	FVector KartVelocity;
 
-	UPROPERTY(Replicated)
-	FVector ReplicatedLocation;
-
-	UPROPERTY(Replicated)
-	FRotator ReplicatedRotation;
+	UPROPERTY(ReplicatedUsing= OnRep_ReplicatedTransform)
+	FTransform ReplicatedTransform;
 
 	// Force that is in proportion to the kart's acceleration
 	UPROPERTY(EditAnywhere, Category = "GoKart")
@@ -86,5 +83,7 @@ private:
 
 	FVector GetRollingResistance();
 
-	
+	UFUNCTION()
+	void OnRep_ReplicatedTransform();
+
 };

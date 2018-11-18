@@ -61,6 +61,7 @@ void AGoKart::BeginPlay()
 {
 	Super::BeginPlay();
 
+	NetUpdateFrequency = 1;
 }
 
 FString GetEnumText(ENetRole Role)
@@ -84,17 +85,8 @@ void AGoKart::Tick(float DeltaTime)
 
 	if (HasAuthority())
 	{
-		// Update location value
-		ReplicatedLocation = GetActorLocation();
-		// Update rotation value
-		ReplicatedRotation = GetActorRotation();
-	}
-	else
-	{
-		// Replicate location from server to all clients
-		SetActorLocation(ReplicatedLocation);
-		// Replicate rotation from server to all clients
-		SetActorRotation(ReplicatedRotation);
+		// Update transformation value
+		ReplicatedTransform = GetActorTransform();
 	}
 
 	DrawDebugString(
@@ -178,10 +170,20 @@ FVector AGoKart::GetRollingResistance()
 	return RollResistance;
 }
 
+void AGoKart::OnRep_ReplicatedTransform()
+{
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Replicate Location on client"));
+		// Replicate transform from server to all clients
+		SetActorTransform(ReplicatedTransform);
+	}
+}
+
+
 void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
-	DOREPLIFETIME(AGoKart, ReplicatedLocation);
-	DOREPLIFETIME(AGoKart, ReplicatedRotation);
+	DOREPLIFETIME(AGoKart, ReplicatedTransform);
 }
