@@ -30,6 +30,12 @@ public:
 private:
 	FVector KartVelocity;
 
+	UPROPERTY(Replicated)
+	FVector ReplicatedLocation;
+
+	UPROPERTY(Replicated)
+	FRotator ReplicatedRotation;
+
 	// Force that is in proportion to the kart's acceleration
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float Throttle;
@@ -69,7 +75,6 @@ private:
 	void Server_MoveRight(float Val);
 
 	void MoveRight(float Val);
-
 
 	void MoveKart(float DeltaTime);
 

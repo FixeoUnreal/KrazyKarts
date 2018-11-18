@@ -4,6 +4,7 @@
 #include <Components/InputComponent.h>
 #include <Engine/World.h>
 #include "DrawDebugHelpers.h"
+#include <UnrealNetwork.h>
 
 
 // Sets default values
@@ -12,6 +13,7 @@ AGoKart::AGoKart()
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bReplicates = true;
 }
 
 void AGoKart::MoveForward(float Val)
@@ -80,6 +82,21 @@ void AGoKart::Tick(float DeltaTime)
 
 	MoveKart(DeltaTime);
 
+	if (HasAuthority())
+	{
+		// Update location value
+		ReplicatedLocation = GetActorLocation();
+		// Update rotation value
+		ReplicatedRotation = GetActorRotation();
+	}
+	else
+	{
+		// Replicate location from server to all clients
+		SetActorLocation(ReplicatedLocation);
+		// Replicate rotation from server to all clients
+		SetActorRotation(ReplicatedRotation);
+	}
+
 	DrawDebugString(
 		GetWorld(),
 		FVector(0,0,100),
@@ -125,6 +142,8 @@ void AGoKart::UpdateRotation(float DeltaTime)
 	AddActorWorldRotation(RotationDelta);
 
 	KartVelocity = RotationDelta.RotateVector(KartVelocity);
+
+	
 }
 
 void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
@@ -139,11 +158,13 @@ void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
 	{
 		KartVelocity = FVector::ZeroVector;
 	}
+
+	
 }
 
 FVector AGoKart::GetAirResistance()
 {
-	// Caculate air resistance
+	// Calculate air resistance
 	FVector AirResistance = -KartVelocity.GetSafeNormal() * KartVelocity.SizeSquared() * DragCoefficient;
 	return AirResistance;
 }
@@ -157,3 +178,10 @@ FVector AGoKart::GetRollingResistance()
 	return RollResistance;
 }
 
+void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(AGoKart, ReplicatedLocation);
+	DOREPLIFETIME(AGoKart, ReplicatedRotation);
+}
