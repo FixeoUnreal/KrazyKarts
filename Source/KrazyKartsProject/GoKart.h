@@ -28,13 +28,14 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	UPROPERTY(Replicated)
 	FVector KartVelocity;
 
 	UPROPERTY(ReplicatedUsing= OnRep_ReplicatedTransform)
 	FTransform ReplicatedTransform;
 
 	// Force that is in proportion to the kart's acceleration
-	UPROPERTY(EditAnywhere, Category = "GoKart")
+	UPROPERTY(Replicated)
 	float Throttle;
 
 	// Mass of the car
@@ -48,6 +49,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float MaxDegreesPerSecond = 90;
 
+	UPROPERTY(Replicated)
 	float SteeringThrow;
 
 	UPROPERTY(EditAnywhere, Category = "GoKart")

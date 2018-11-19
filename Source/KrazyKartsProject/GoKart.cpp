@@ -174,7 +174,6 @@ void AGoKart::OnRep_ReplicatedTransform()
 {
 	if (!HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Replicate Location on client"));
 		// Replicate transform from server to all clients
 		SetActorTransform(ReplicatedTransform);
 	}
@@ -186,4 +185,7 @@ void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifeti
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(AGoKart, ReplicatedTransform);
+	DOREPLIFETIME(AGoKart, KartVelocity);
+	DOREPLIFETIME(AGoKart, Throttle);
+	DOREPLIFETIME(AGoKart, SteeringThrow);
 }
