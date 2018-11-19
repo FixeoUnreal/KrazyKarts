@@ -61,11 +61,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	UPROPERTY(Replicated)
-	FVector KartVelocity;
+	UPROPERTY(ReplicatedUsing=OnRep_ServerState)
+	FGoKartState ServerState;
 
-	UPROPERTY(ReplicatedUsing= OnRep_ReplicatedTransform)
-	FTransform ReplicatedTransform;
+	FVector KartVelocity;
 
 	// Force that is in proportion to the kart's acceleration
 	UPROPERTY(Replicated)
@@ -96,15 +95,10 @@ private:
 	float MinTurnRadius = 10.f;
 
 private:
-	/** Handle pressing forwards */
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_MoveForward(float Val);
-
 	void MoveForward(float Val);
 
-	/** Handle pressing right */
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_MoveRight(float Val);
+	void Server_SendMove(FGoKartMove Move);
 
 	void MoveRight(float Val);
 
@@ -119,6 +113,6 @@ private:
 	FVector GetRollingResistance();
 
 	UFUNCTION()
-	void OnRep_ReplicatedTransform();
+	void OnRep_ServerState();
 
 };
