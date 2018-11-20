@@ -97,7 +97,7 @@ private:
 	float MinTurnRadius = 10.f;
 
 private:
-	void SimulateMove(FGoKartMove Move);
+	void SimulateMove(const FGoKartMove& Move);
 
 	void MoveForward(float Val);
 

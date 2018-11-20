@@ -18,7 +18,7 @@ AGoKart::AGoKart()
 	bReplicates = true;
 }
 
-void AGoKart::SimulateMove(FGoKartMove Move)
+void AGoKart::SimulateMove(const FGoKartMove& Move)
 {
 	Throttle = Move.Throttle;
 	SteeringThrow = Move.SteeringThrow;
@@ -194,6 +194,11 @@ void AGoKart::OnRep_ServerState()
 		KartVelocity = ServerState.Velocity;
 
 		ClearAcknowledgedMoves(ServerState.LastMove);
+
+		for (const FGoKartMove& Move : UnacknowledgedMoves)
+		{
+			SimulateMove(Move);
+		}
 	}
 }
 
