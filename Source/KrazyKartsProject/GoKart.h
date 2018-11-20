@@ -57,6 +57,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	FGoKartMove CreateMove(float DeltaTime);
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -69,6 +71,10 @@ private:
 	// Force that is in proportion to the kart's acceleration
 	float Throttle;
 
+	float SteeringThrow;
+
+	TArray<FGoKartMove> UnacknowledgedMoves;	
+
 	// Mass of the car
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float Mass = 1000;
@@ -79,8 +85,6 @@ private:
 	// The number of degrees rotated per second at full control throw
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float MaxDegreesPerSecond = 90;
-
-	float SteeringThrow;
 
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float DragCoefficient = 16.f;
@@ -114,5 +118,7 @@ private:
 
 	UFUNCTION()
 	void OnRep_ServerState();
+
+	void ClearAcknowledgedMoves(FGoKartMove LastMove);
 
 };

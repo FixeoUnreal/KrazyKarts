@@ -5,6 +5,8 @@
 #include <Engine/World.h>
 #include "DrawDebugHelpers.h"
 #include <UnrealNetwork.h>
+#include <GameFramework/GameStateBase.h>
+#include <Kismet/GameplayStatics.h>
 
 
 // Sets default values
@@ -79,11 +81,14 @@ void AGoKart::Tick(float DeltaTime)
 
 	if (IsLocallyControlled())
 	{
-		FGoKartMove SendingMove;
-		SendingMove.DeltaTime = DeltaTime;
-		SendingMove.SteeringThrow = SteeringThrow;
-		SendingMove.Throttle = Throttle;
-		//SendingMove.Time = GetCurrentTime();
+		FGoKartMove SendingMove = CreateMove(DeltaTime);
+
+		if (!HasAuthority())
+		{
+			UnacknowledgedMoves.Add(SendingMove);
+			UE_LOG(LogTemp, Warning, TEXT("Queue length: %d"), UnacknowledgedMoves.Num());
+		}
+
 		Server_SendMove(SendingMove);
 
 		SimulateMove(SendingMove);
@@ -97,6 +102,17 @@ void AGoKart::Tick(float DeltaTime)
 		FColor::White,
 		DeltaTime
 	);
+}
+
+FGoKartMove AGoKart::CreateMove(float DeltaTime)
+{
+	FGoKartMove SendingMove;
+	SendingMove.DeltaTime = DeltaTime;
+	SendingMove.SteeringThrow = SteeringThrow;
+	SendingMove.Throttle = Throttle;
+	SendingMove.Time = UGameplayStatics::GetGameState(this)->GetServerWorldTimeSeconds();
+	
+	return SendingMove;
 }
 
 // Called to bind functionality to input
@@ -173,12 +189,28 @@ void AGoKart::OnRep_ServerState()
 {
 	if (!HasAuthority())
 	{
-		// Replicate transform from server to all clients
+		// Replicate movement from server to all clients
 		SetActorTransform(ServerState.Transform);
 		KartVelocity = ServerState.Velocity;
+
+		ClearAcknowledgedMoves(ServerState.LastMove);
 	}
 }
 
+
+void AGoKart::ClearAcknowledgedMoves(FGoKartMove LastMove)
+{
+	TArray<FGoKartMove> NewMoves;
+
+	for (const FGoKartMove& Move : UnacknowledgedMoves)
+	{
+		if (Move.Time > LastMove.Time)
+		{
+			NewMoves.Add(Move);
+		}
+	}
+	UnacknowledgedMoves = NewMoves;
+}
 
 void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
