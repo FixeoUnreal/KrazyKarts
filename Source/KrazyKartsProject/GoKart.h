@@ -67,7 +67,6 @@ private:
 	FVector KartVelocity;
 
 	// Force that is in proportion to the kart's acceleration
-	UPROPERTY(Replicated)
 	float Throttle;
 
 	// Mass of the car
@@ -81,7 +80,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float MaxDegreesPerSecond = 90;
 
-	UPROPERTY(Replicated)
 	float SteeringThrow;
 
 	UPROPERTY(EditAnywhere, Category = "GoKart")
@@ -95,6 +93,8 @@ private:
 	float MinTurnRadius = 10.f;
 
 private:
+	void SimulateMove(FGoKartMove Move);
+
 	void MoveForward(float Val);
 
 	UFUNCTION(Server, Reliable, WithValidation)

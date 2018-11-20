@@ -16,6 +16,13 @@ AGoKart::AGoKart()
 	bReplicates = true;
 }
 
+void AGoKart::SimulateMove(FGoKartMove Move)
+{
+	Throttle = Move.Throttle;
+	SteeringThrow = Move.SteeringThrow;
+	MoveKart(Move.DeltaTime);
+}
+
 void AGoKart::MoveForward(float Val)
 {
 	Throttle = Val;
@@ -23,8 +30,12 @@ void AGoKart::MoveForward(float Val)
 
 void AGoKart::Server_SendMove_Implementation(FGoKartMove Move)
 {
-	Throttle = Move.Throttle;
-	SteeringThrow = Move.SteeringThrow;
+	SimulateMove(Move);
+	
+	// Update transformation value
+	ServerState.Transform = GetActorTransform();
+	ServerState.Velocity = KartVelocity;
+	ServerState.LastMove = Move;
 }
 
 bool AGoKart::Server_SendMove_Validate(FGoKartMove Move)
@@ -64,7 +75,7 @@ void AGoKart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	MoveKart(DeltaTime);
+	//MoveKart(DeltaTime);
 
 	if (IsLocallyControlled())
 	{
@@ -74,14 +85,8 @@ void AGoKart::Tick(float DeltaTime)
 		SendingMove.Throttle = Throttle;
 		//SendingMove.Time = GetCurrentTime();
 		Server_SendMove(SendingMove);
-	}
 
-	if (HasAuthority())
-	{
-		// Update transformation value
-		ServerState.Transform = GetActorTransform();
-		ServerState.Velocity = KartVelocity;
-		// TODO Update last move
+		SimulateMove(SendingMove);
 	}
 
 	DrawDebugString(
@@ -180,6 +185,4 @@ void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifeti
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(AGoKart, ServerState);
-	DOREPLIFETIME(AGoKart, Throttle);
-	DOREPLIFETIME(AGoKart, SteeringThrow);
 }
