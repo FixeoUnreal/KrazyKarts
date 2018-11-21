@@ -87,9 +87,9 @@ private:
 
 	
 private:
-	void MoveKart(float DeltaTime);
+	void MoveKart(FGoKartMove Move);
 
-	void UpdateRotation(float DeltaTime);
+	void UpdateRotation(FGoKartMove Move);
 
 	void UpdateLocationFromVelocity(float DeltaTime);
 

@@ -59,7 +59,7 @@ void UGoKartMovementComponent::SimulateMove(const FGoKartMove& Move)
 {
 	Throttle = Move.Throttle;
 	SteeringThrow = Move.SteeringThrow;
-	MoveKart(Move.DeltaTime);
+	MoveKart(Move);
 }
 
 
@@ -74,25 +74,25 @@ FGoKartMove UGoKartMovementComponent::CreateMove(float DeltaTime)
 	return SendingMove;
 }
 
-void UGoKartMovementComponent::MoveKart(float DeltaTime)
+void UGoKartMovementComponent::MoveKart(FGoKartMove Move)
 {
-	FVector Force = GetOwner()->GetActorForwardVector() * MaxDrivingForce * Throttle;
+	FVector Force = GetOwner()->GetActorForwardVector() * MaxDrivingForce * Move.Throttle;
 	Force += GetAirResistance();
 	Force += GetRollingResistance();
 	FVector Acceleration = Force / Mass;
-	KartVelocity += Acceleration * DeltaTime;
+	KartVelocity += Acceleration * Move.DeltaTime;
 
 
-	UpdateRotation(DeltaTime);
+	UpdateRotation(Move);
 
-	UpdateLocationFromVelocity(DeltaTime);
+	UpdateLocationFromVelocity(Move.DeltaTime);
 
 }
 
-void UGoKartMovementComponent::UpdateRotation(float DeltaTime)
+void UGoKartMovementComponent::UpdateRotation(FGoKartMove Move)
 {
-	float DeltaLocation = FVector::DotProduct(GetOwner()->GetActorForwardVector(), KartVelocity) * DeltaTime;
-	float RotationAngle = DeltaLocation / MinTurnRadius * SteeringThrow;
+	float DeltaLocation = FVector::DotProduct(GetOwner()->GetActorForwardVector(), KartVelocity) * Move.DeltaTime;
+	float RotationAngle = DeltaLocation / MinTurnRadius * Move.SteeringThrow;
 	FQuat RotationDelta(GetOwner()->GetActorUpVector(), RotationAngle);
 	GetOwner()->AddActorWorldRotation(RotationDelta);
 
