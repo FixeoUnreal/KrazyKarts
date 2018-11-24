@@ -55,6 +55,8 @@ private:
 
 	FTransform ClientTransform;
 
+	FVector ClientStartVelocity;
+
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SendMove(FGoKartMove Move);
