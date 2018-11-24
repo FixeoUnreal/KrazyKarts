@@ -53,7 +53,7 @@ private:
 
 	float ClientTimeBetweenLastUpdates;
 
-	FVector ClientStartLocation;
+	FTransform ClientTransform;
 
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
