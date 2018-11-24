@@ -18,6 +18,7 @@ AGoKart::AGoKart()
 	MovementReplicator = CreateDefaultSubobject<UGoKartMovementReplicator>(TEXT("MovementReplicator"));
 
 	bReplicates = true;
+	bReplicateMovement = false;
 }
 
 
