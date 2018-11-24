@@ -32,7 +32,11 @@ void UGoKartMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (GetOwner()->Role == ROLE_AutonomousProxy || GetOwner()->GetRemoteRole() == ROLE_SimulatedProxy)
+	{
+		LastMove = CreateMove(DeltaTime);
+		SimulateMove(LastMove);
+	}
 }
 
 FVector UGoKartMovementComponent::GetKartVelocity() const
@@ -62,6 +66,11 @@ void UGoKartMovementComponent::SimulateMove(const FGoKartMove& Move)
 	MoveKart(Move);
 }
 
+
+FGoKartMove UGoKartMovementComponent::GetLastMove() const
+{
+	return LastMove;
+}
 
 FGoKartMove UGoKartMovementComponent::CreateMove(float DeltaTime)
 {

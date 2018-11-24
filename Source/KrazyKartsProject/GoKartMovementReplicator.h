@@ -58,4 +58,6 @@ private:
 
 	void ClearAcknowledgedMoves(FGoKartMove LastMove);
 
+	void UpdateServerState(const FGoKartMove& Move);
+
 };

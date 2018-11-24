@@ -52,9 +52,10 @@ public:
 
 	void SetSteeringThrow(float Val);
 
-	FGoKartMove CreateMove(float DeltaTime);
 
 	void SimulateMove(const FGoKartMove& Move);
+
+	FGoKartMove GetLastMove() const;
 
 private:
 	FVector KartVelocity;
@@ -85,6 +86,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "GoKart")
 	float MinTurnRadius = 10.f;
 
+	FGoKartMove LastMove;
+
 	
 private:
 	void MoveKart(FGoKartMove Move);
@@ -97,5 +100,6 @@ private:
 
 	FVector GetRollingResistance();
 
-	
+	FGoKartMove CreateMove(float DeltaTime);
+
 };
