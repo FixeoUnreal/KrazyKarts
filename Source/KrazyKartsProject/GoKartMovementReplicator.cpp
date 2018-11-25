@@ -3,6 +3,7 @@
 #include "GoKartMovementReplicator.h"
 #include <UnrealNetwork.h>
 #include <GameFramework/Actor.h>
+#include "Engine/World.h"
 
 
 // Sets default values for this component's properties
@@ -24,6 +25,10 @@ void UGoKartMovementReplicator::BeginPlay()
 	// Assign movement component
 	MovementComp = GetOwner()->FindComponentByClass<UGoKartMovementComponent>();
 	
+	if (GetOwnerRole() == ROLE_Authority)
+	{
+		ClientSimulatedTime = GetWorld()->TimeSeconds;
+	}
 }
 
 
@@ -62,11 +67,22 @@ void UGoKartMovementReplicator::Server_SendMove_Implementation(FGoKartMove Move)
 	MovementComp->SimulateMove(Move);
 
 	UpdateServerState(Move);
+	ClientSimulatedTime = GetWorld()->TimeSeconds;
 }
 
 bool UGoKartMovementReplicator::Server_SendMove_Validate(FGoKartMove Move)
 {
 	// TODO
+	if (!Move.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Received invalid move"));
+		return false;
+	}
+	if (!IsTimeValid(Move.DeltaTime))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client is running too fast"));
+		return false;
+	}
 	return true;
 }
 
@@ -206,6 +222,11 @@ void UGoKartMovementReplicator::InterpolateRotation(float LerpRatio)
 float UGoKartMovementReplicator::VelocityToDerivative()
 {
 	return ClientTimeBetweenLastUpdates * 100;
+}
+
+bool UGoKartMovementReplicator::IsTimeValid(float DeltaTime)
+{
+	return (ClientSimulatedTime + DeltaTime) <= GetWorld()->TimeSeconds;
 }
 
 void UGoKartMovementReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

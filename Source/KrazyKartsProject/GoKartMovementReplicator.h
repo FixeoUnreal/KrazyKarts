@@ -78,6 +78,8 @@ private:
 	UPROPERTY()
 	USceneComponent* MeshOffsetRoot;
 
+	float ClientSimulatedTime;
+
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SendMove(FGoKartMove Move);
@@ -104,5 +106,7 @@ private:
 	void InterpolateRotation(float LerpRatio);
 
 	float VelocityToDerivative();
+
+	bool IsTimeValid(float DeltaTime);
 
 };
