@@ -54,6 +54,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable)
+	void SetMeshOffsetRoot(USceneComponent* Root) { MeshOffsetRoot = Root; }
+
+
 private:
 	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
 	FGoKartState ServerState;
@@ -70,6 +74,9 @@ private:
 	FTransform ClientTransform;
 
 	FVector ClientStartVelocity;
+
+	UPROPERTY()
+	USceneComponent* MeshOffsetRoot;
 
 private:
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -97,4 +104,5 @@ private:
 	void InterpolateRotation(float LerpRatio);
 
 	float VelocityToDerivative();
+
 };
